@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share and Care Hub</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 40px;
+            background-color: #fff;
+           
+        }
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            margin-left: 4%;
+        }
+        .navbar .logo img {
+            height: 60px;
+            margin-right: 10px;
+            border-radius: 10%;
+        }
+        .navbar .logo span {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+            margin-right: 4%;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .navbar .nav-links a:hover {
+            color: #007BFF;
+        }
+        .hero {
+
+            padding: 100px 0;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            margin-left: 10%;
+            position: relative;
+            z-index: 1;
+        }
+        .bg-image {
+            background-image: url('./images/Resource\ bg\ hd.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            position: relative;
+        }
+        .container {
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+        .options {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .options button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ff9f00;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        #itemList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px;
+            width: 250px;
+        }
+        .item img {
+            max-width: 100%;
+            height: auto;
+        }
+        #contributeForm {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        #contributeForm input, #contributeForm textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #contributeForm button {
+            background-color: #fb641b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="./images/share-and-care-hub-high-resolution-logo.png" alt="Logo">
+            <span>Share and Care Hub</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" >HOME</a>
+            <a href="#">OPPERTUNITES</a>
+            <a href="signup.html">SIGN UP</a>
+        </div>
+    </div>
+
+    <div class="bg-image">
+        <div class="hero">
+            <h1>Together, we have enough. <br> When we share, we build abundance</h1>
+        </div>
+        
+    </div>
+
+    <div class="container">
+        <div class="options">
+            <button onclick="showContributeForm()">Contribute an Item</button>
+            <button onclick="showItems()">Browse Items</button>
+            <button onclick="showRequestForm()">Request an Item</button>
+        </div>
+
+        <div id="itemList"></div>
+
+        <div id="contributeForm" style="display:none;">
+            <h2>Contribute an Item</h2>
+            <form id="resourceForm">
+                <input type="text" id="itemName" placeholder="Item Name" required>
+                <textarea id="description" placeholder="Description" required></textarea>
+                <input type="text" id="condition" placeholder="Condition" required>
+                <input type="text" id="location" placeholder="Your Location" required>
+                <input type="text" id="contact" placeholder="Your Contact Information" required>
+                <input type="file" id="itemImage" accept="image/*" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="requestForm" style="display:none;">
+            <h2>Request an Item</h2>
+            <form id="itemRequestForm">
+                <input type="text" id="requestItemName" placeholder="Item Name" required>
+                <textarea id="requestDescription" placeholder="Why do you need this item?" required></textarea>
+                <input type="text" id="requestorName" placeholder="Your Name" required>
+                <input type="text" id="requestorContact" placeholder="Your Contact Information" required>
+                <button type="submit">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+
+        function showContributeForm() {
+            document.getElementById('contributeForm').style.display = 'block';
+            document.getElementById('itemList').style.display = 'none';
+        }
+
+        function showItems() {
+            document.getElementById('contributeForm').style.display = 'none';
+            document.getElementById('itemList').style.display = 'flex';
+            displayItems();
+        }
+
+        function showRequestForm() {
+            document.getElementById('contributeForm').style.display = 'none';
+            document.getElementById('itemList').style.display = 'none';
+            document.getElementById('requestForm').style.display = 'block';
+        }
+
+        document.getElementById('resourceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newItem = {
+                name: document.getElementById('itemName').value,
+                description: document.getElementById('description').value,
+                condition: document.getElementById('condition').value,
+                location: document.getElementById('location').value,
+                contact: document.getElementById('contact').value,
+                image: URL.createObjectURL(document.getElementById('itemImage').files[0])
+            };
+            items.push(newItem);
+            this.reset();
+            showItems();
+        });
+
+        document.getElementById('itemRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const requestDetails = {
+                itemName: document.getElementById('requestItemName').value,
+                description: document.getElementById('requestDescription').value,
+                name: document.getElementById('requestorName').value,
+                contact: document.getElementById('requestorContact').value
+            };
+            alert(`Request submitted for ${requestDetails.itemName}. We'll contact you if a match is found.`);
+            this.reset();
+            showItems();
+        });
+
+        function displayItems() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+            items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'item';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    <p><strong>Condition:</strong> ${item.condition}</p>
+                    <p><strong>Location:</strong> ${item.location}</p>
+                    <p><strong>Contact:</strong> ${item.contact}</p>
+                    <button onclick="requestItem('${item.contact}')">Request this Item</button>
+                `;
+                itemList.appendChild(itemElement);
+            });
+        }
+
+        function requestItem(contact) {
+            alert(`Please contact ${contact} to request this item.`);
+        }
+    </script>
+</body>
+</html>
